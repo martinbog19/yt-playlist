@@ -1,7 +1,7 @@
 # yt-playlist
 
 ## Requirements
-`pip install -r requirements`
+`pip install -r requirements.txt`
 
 
 ## Playlist
