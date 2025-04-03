@@ -22,6 +22,7 @@ try:
     for i, video_url in enumerate(video_urls):
         title, file_path = download_audio(video_url, temp_path)
         print(f'[{str(i+1).zfill(2)}/{len(video_urls)}]  Successfully downloaded audio of "{title}"')
+        
     print('\n')
 
     mp3_files = [
@@ -29,6 +30,7 @@ try:
         if file.endswith('.mp3')
     ]
 
+    create_playlist(PLAYLIST_NAME)
     for i, mp3_file in enumerate(mp3_files):
 
         file_path = os.path.join(temp_path, mp3_file)
@@ -38,9 +40,9 @@ try:
 
         abs_file_path = os.path.abspath(safe_path)
 
-        create_playlist(PLAYLIST_NAME)
         move_to_playlist(abs_file_path, PLAYLIST_NAME)
         print(f'[{str(i+1).zfill(2)}/{len(video_urls)}]  {PLAYLIST_NAME} <-- {safe_filename}')
+
     print('\n')
 
 except Exception as e:
