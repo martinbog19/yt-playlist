@@ -1,12 +1,11 @@
 import yt_dlp
 from mutagen.easyid3 import EasyID3
-import time
 
 
 
 def progress_hook(progress: dict) -> None:
 
-    if  progress['status'] == 'downloading':
+    if progress['status'] == 'downloading':
         percent = progress.get('_percent_str', '').strip()
         speed = progress.get('_speed_str', '').strip()
         eta = progress.get('_eta_str', '').strip()
