@@ -182,3 +182,7 @@ playlists/*.txt
 
 
 *.ipynb
+
+
+songs.nosync/
+downloaded.txt

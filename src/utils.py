@@ -4,18 +4,30 @@ import unicodedata
 
 
 
-def read_playlist(playlist_name: str, playlist_folder: str='playlists') -> list[str]:
+def read_playlist(playlist_path) -> list[str]:
 
-    file = playlist_name if playlist_name.endswith('.txt') else playlist_name + '.txt'
-    filepath = os.path.join(playlist_folder, file).lower()
+    assert playlist_path.endswith('.txt'), 'Playlist path must be a .txt file!'
 
-    with open(filepath, 'r') as f:
-        video_urls = [
+    with open(playlist_path, 'r') as f:
+        youtube_ids = [
             line.split('#')[0].rstrip().rstrip('\n')
             for line in f.readlines()
         ]
 
-    return video_urls
+    return youtube_ids
+
+
+def read_archives(archive_path) -> list[str]:
+
+    with open(archive_path, 'r') as f:
+        youtube_ids = [
+            line.lstrip('youtube ').rstrip('\n')
+            for line in f.readlines()
+        ]
+
+    return youtube_ids
+
+
 
 
 def preprocess_filename(raw_name: str) -> str:

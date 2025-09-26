@@ -1,52 +1,31 @@
 import os
-import shutil
-import sys
 
-
-from src.utils import read_playlist, preprocess_filename
+from src.utils import read_playlist, read_archives, preprocess_filename
 from src.youtube_download import download_audio
-from src.apple_music import create_playlist, move_to_playlist
 
 
-assert len(sys.argv) > 1, 'Please specify playlist name!'
-assert len(sys.argv) < 3, 'Please provide only one argument...'
 
-PLAYLIST_NAME = sys.argv[1]
-video_urls = read_playlist(PLAYLIST_NAME)
+PLAYLIST     = 'playlist.txt'
+SONGS_PATH   = 'songs.nosync'
+ARCHIVE_PATH = 'downloaded.txt'
+
+youtube_ids = read_playlist(PLAYLIST)
 
 print('\n')
-try:
-    temp_path = 'temp_folder.nosync'
-    os.makedirs(temp_path)
+for i, youtube_id in enumerate(youtube_ids):
 
-    for i, video_url in enumerate(video_urls):
-        title, file_path = download_audio(video_url, temp_path)
-        print(f'[{str(i+1).zfill(2)}/{len(video_urls)}]  Successfully downloaded audio of "{title}"')
+    video_url = 'https://www.youtube.com/watch?v=' + youtube_id
+
+    title, file_path = download_audio(video_url, SONGS_PATH, ARCHIVE_PATH)
+
+    if title and file_path:
         
-    print('\n')
+        print(f'[{str(i+1).zfill(3)}/{str(len(youtube_ids)).zfill(3)}]  Successfully downloaded audio of "{title}"')
 
-    mp3_files = [
-        file for file in os.listdir(temp_path)
-        if file.endswith('.mp3')
-    ]
-
-    create_playlist(PLAYLIST_NAME)
-    for i, mp3_file in enumerate(mp3_files):
-
-        file_path = os.path.join(temp_path, mp3_file)
-        safe_filename = preprocess_filename(mp3_file)
-        safe_path = os.path.join(temp_path, safe_filename)
+        safe_filename = preprocess_filename(file_path.split('/')[-1])
+        safe_path = os.path.join(SONGS_PATH, safe_filename)
         os.rename(file_path, safe_path)
+        print(f'Saved as {safe_path}')
 
-        abs_file_path = os.path.abspath(safe_path)
-
-        move_to_playlist(abs_file_path, PLAYLIST_NAME)
-        print(f'[{str(i+1).zfill(2)}/{len(video_urls)}]  {PLAYLIST_NAME} <-- {safe_filename}')
-
-    print('\n')
-
-except Exception as e:
-    print(f'{video_url} Failed with error {e}')
-
-finally:
-    shutil.rmtree(temp_path)
+    else:
+        print(f'Skipping {video_url}...')
